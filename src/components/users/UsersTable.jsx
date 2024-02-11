@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
+  CircularProgress,
   Paper,
   styled,
   Table,
@@ -18,8 +19,12 @@ import {
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 
-import UserTableRow from "./UserTableRow";
+// hooks
+import { useLocation } from "react-router";
 import useFetch from "../../hooks/useFetch";
+
+// components
+import UserTableRow from "./UserTableRow";
 
 const StyledTableHead = styled(TableHead)(() => ({
   "& .MuiTableCell-root": {
@@ -29,33 +34,62 @@ const StyledTableHead = styled(TableHead)(() => ({
 }));
 
 export default function UsersTable() {
+  const location = useLocation();
+  const locationState = location.state;
+  const [currentPage, setCurrentPage] = useState(
+    locationState?.currentPage || 1
+  );
   const [fetchParams, setFetchParams] = useState({
-    url: `https://api.github.com/users?since=${10}&per_page=30`,
+    url: `https://api.github.com/users?since=${currentPage * 10}&per_page=10`,
     method: "get",
     key: [
       "app",
       "get",
       "user",
       {
-        name: `1`,
+        name: `${currentPage}`,
       },
     ],
     cache: {
       enabled: true,
-      suspense: 0,
+      suspense: 400,
     },
   });
-
   const { loading, error, data } = useFetch(fetchParams);
+
+  useEffect(() => {
+    setFetchParams((prevParams) => ({
+      ...prevParams,
+      url: `https://api.github.com/users?since=${currentPage * 50}&per_page=10`,
+      key: [...prevParams.key.slice(0, -1), { name: `${currentPage}` }],
+    }));
+  }, [currentPage]);
 
   return (
     <TableContainer
       component={Paper}
       sx={{
         bgcolor: "common.white",
+        minHeight: 800,
+        position: "relative",
       }}
     >
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      {loading && (
+        <Box
+          height={1}
+          width={1}
+          bgcolor="common.white"
+          position="absolute"
+          top={0}
+          left={0}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <CircularProgress />
+        </Box>
+      )}
+      <Table sx={{ minWidth: 650, minHeight: 800 }} aria-label="simple table">
         <StyledTableHead>
           <TableRow>
             <TableCell>Avatar</TableCell>
@@ -72,10 +106,34 @@ export default function UsersTable() {
             <UserTableRow
               key={row.login}
               currentUserData={row}
+              currentPage={currentPage}
             />
           ))}
         </TableBody>
       </Table>
+      <Box
+        display="flex"
+        gap={1}
+        alignItems="center"
+        justifyContent="space-between"
+        p={2}
+      >
+        <Button
+          variant="contained"
+          startIcon={<ArrowBackRoundedIcon />}
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((prev) => prev - 1)}
+        >
+          Prev
+        </Button>
+        <Button
+          variant="contained"
+          endIcon={<ArrowForwardRoundedIcon />}
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+        >
+          Next
+        </Button>
+      </Box>
     </TableContainer>
   );
 }

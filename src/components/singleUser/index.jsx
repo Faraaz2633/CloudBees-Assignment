@@ -1,9 +1,17 @@
 import React from "react";
 
 // mui
-import { Box, Container, Typography, styled } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  Typography,
+  styled,
+} from "@mui/material";
 
 // icons
+import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import BusinessIcon from "@mui/icons-material/Business";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import LanguageRoundedIcon from "@mui/icons-material/LanguageRounded";
@@ -11,12 +19,12 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import XIcon from "@mui/icons-material/X";
 
 // lib
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 
 // hooks
 import useFetch from "../../hooks/useFetch";
 
-const StyledAvatar = styled("img")(({ theme }) => ({
+const StyledAvatar = styled("img")(() => ({
   width: "260px",
   height: "260px",
   borderRadius: "50%",
@@ -24,29 +32,51 @@ const StyledAvatar = styled("img")(({ theme }) => ({
 
 export default function SingleUser() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const locationState = location.state;
 
   const pathArr = location.pathname.split("/");
   const lastElement = pathArr[pathArr.length - 1];
 
   const { loading, error, data } = useFetch({
-    url: `https://api.github.com/users/${lastElement}`,
+    url: `https://api.github.com/users/${
+      locationState?.githubUserName || lastElement
+    }`,
     method: "get",
     key: [
       "app",
       "get",
       "user",
       {
-        name: `${lastElement}`,
+        name: `${locationState?.githubUserName || lastElement}`,
       },
     ],
     cache: {
       enabled: true,
-      suspense: 0,
+      suspense: 400,
     },
+    disableReRender: true,
   });
+
+  const handlePrevious = () => {
+    navigate("/users", {
+      state: {
+        currentPage: locationState?.currentPage,
+      },
+    });
+  };
 
   return (
     <Container maxWidth="xl">
+      <Box pb={2}>
+        <Button
+          variant="outlined"
+          startIcon={<ArrowBackRoundedIcon />}
+          onClick={handlePrevious}
+        >
+          Back
+        </Button>
+      </Box>
       <Box
         display="flex"
         bgcolor="common.white"
@@ -64,7 +94,14 @@ export default function SingleUser() {
           md: "row",
         }}
       >
-        <Box display="flex" gap={2} flexDirection="column" alignItems="center">
+        <Box
+          display="flex"
+          gap={2}
+          flexDirection="column"
+          alignItems="center"
+          maxWidth={320}
+          width={1}
+        >
           <StyledAvatar src={data?.avatar_url} alt="avatar-url" />
           <Typography variant="h4" fontWeight={600}>
             {data?.name}
@@ -223,6 +260,21 @@ export default function SingleUser() {
             )}
           </Box>
         </Box>
+        {loading && (
+          <Box
+            height={1}
+            width={1}
+            bgcolor="common.white"
+            position="absolute"
+            top={0}
+            left={0}
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <CircularProgress />
+          </Box>
+        )}
       </Box>
     </Container>
   );

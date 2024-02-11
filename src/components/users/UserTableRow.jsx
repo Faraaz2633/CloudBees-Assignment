@@ -4,7 +4,7 @@ import React from "react";
 import { TableCell, TableRow, styled } from "@mui/material";
 
 // lib
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // hooks
 import useFetch from "../../hooks/useFetch";
@@ -27,12 +27,23 @@ export default function UserTableRow({ currentUserData, currentPage }) {
     ],
     cache: {
       enabled: true,
-      suspense: 0,
+      suspense: 200,
     },
   });
 
+  const navigate = useNavigate();
+
   const name = data?.name?.split(" ");
   const nameLength = data?.name?.split(" ").length;
+
+  const handleClick = () => {
+    navigate(`${currentUserData.login}`, {
+      state: {
+        currentPage,
+        githubUserName: currentUserData.login
+      },
+    });
+  };
 
   return (
     <TableRow
@@ -42,9 +53,9 @@ export default function UserTableRow({ currentUserData, currentPage }) {
           bgcolor: "#F5F5F5",
         },
         transition: "all ease 0.2s",
+        cursor: "pointer",
       }}
-      component={Link}
-      to={`${currentUserData.login}`}
+      onClick={handleClick}
     >
       <TableCell component="th" scope="row">
         <StyledImg src={data?.avatar_url} alt="avatar" width={32} height={32} />

@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
-import { useCache } from "../context/CacheContext";
+
+// lib
 import axios from "axios";
+
+// context
+import { useCache } from "../context/CacheContext";
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -14,6 +18,7 @@ export default function useFetch({
   key,
   initialEnabled = true,
   cache,
+  disableReRender = false,
   ...axiosConfig
 }) {
   const [loading, setLoading] = useState(false);
@@ -51,11 +56,14 @@ export default function useFetch({
     deleteCache(keyify(invalidationKey));
   }
 
-  useEffect(() => {
-    if (initialEnabled) {
-      refetch();
-    }
-  }, []);
+  useEffect(
+    () => {
+      if (initialEnabled) {
+        refetch();
+      }
+    },
+    disableReRender ? [] : [key]
+  );
 
   return { loading, data, error, refetch, inValidate };
 }
