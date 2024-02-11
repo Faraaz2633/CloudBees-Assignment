@@ -3,6 +3,10 @@ import { Navigate, useRoutes } from "react-router-dom";
 // layouts
 import RootLayout from "../layouts/RootLayout";
 
+// components
+import Users from "../components/users";
+import SingleUser from "../components/singleUser";
+
 export default function Router() {
   return useRoutes([
     {
@@ -15,11 +19,11 @@ export default function Router() {
         },
         {
           path: "users",
-          element: <div>users</div>,
+          element: <Users />,
         },
         {
           path: "users/:id",
-          element: <div>single user</div>,
+          element: <SingleUser />,
         },
       ],
     },

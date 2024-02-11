@@ -4,22 +4,37 @@ import React from "react";
 import { Box } from "@mui/material";
 
 // lib
-import { Outlet } from 'react-router-dom';
+import { Outlet } from "react-router-dom";
+
+// component
+import Header from "../components/header";
 
 export default function RootLayout() {
   return (
     <>
-      <Box>header</Box>
+      <Header />
       <Box
         sx={{
-          pt: {
-            xs: 1,
-            md: 4,
-          },
+          pt: 10,
           pb: 4,
           px: 4,
+          minHeight: "100vh",
+          position: "relative",
         }}
       >
+        <Box
+          position="absolute"
+          top="50%"
+          right={0}
+          sx={{
+            transform: "translateY(-50%)",
+          }}
+        >
+          <img
+            src="/assets/illustration/numericIllustration.svg"
+            alt="numeric-illustration"
+          />
+        </Box>
         <Outlet />
       </Box>
     </>
