@@ -1,18 +1,23 @@
 import React from "react";
 
 // mui
-import { CssBaseline } from "@mui/material";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 
 // routes
 import { BrowserRouter } from "react-router-dom";
 import Router from "./routes";
 
+// theme
+import { theme } from "./theme";
+
 function App() {
   return (
-    <BrowserRouter>
-      <CssBaseline />
-      <Router />
-    </BrowserRouter>
+    <ThemeProvider theme={theme}>
+      <BrowserRouter>
+        <CssBaseline />
+        <Router />
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
