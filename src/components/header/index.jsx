@@ -16,7 +16,7 @@ const HeaderWrapper = styled(Box)(({ theme }) => ({
   borderBottom: "1px solid #EAECF0",
   background: theme.palette.common.white,
   backdropFilter: "blur(5px)",
-  padding: theme.spacing(2, 5),
+  padding: theme.spacing(2, 3),
   [theme.breakpoints.down("sm")]: {
     padding: theme.spacing(2, 2),
   },
@@ -32,19 +32,17 @@ export default function Header() {
   return (
     <HeaderWrapper component="header">
       <NavWrapper component="nav">
-        <Link to="/">
-          <Box display="flex" gap={1} alignItems="center">
-            <img
-              src="/assets/icons/cloudbees_logo.jpg"
-              alt="logo"
-              width={32}
-              height={32}
-            />
-            <Typography variant="h5" fontWeight="bold" color="common.black">
-              CloudBees Assignment
-            </Typography>
-          </Box>
-        </Link>
+        <Box display="flex" gap={1} alignItems="center" component={Link} to="/" width='fit-content'>
+          <img
+            src="/assets/icons/cloudbees_logo.jpg"
+            alt="logo"
+            width={32}
+            height={32}
+          />
+          <Typography variant="h5" fontWeight="bold" color="common.black">
+            CloudBees Assignment
+          </Typography>
+        </Box>
       </NavWrapper>
     </HeaderWrapper>
   );

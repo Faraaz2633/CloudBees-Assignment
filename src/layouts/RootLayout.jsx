@@ -17,7 +17,6 @@ export default function RootLayout() {
         sx={{
           pt: 10,
           pb: 4,
-          px: 4,
           minHeight: "100vh",
           position: "relative",
         }}
